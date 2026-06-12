@@ -7,6 +7,7 @@
 <!-- Firebase via jsdelivr -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-app-compat.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-firestore-compat.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.0/firebase-auth-compat.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
@@ -35,6 +36,44 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
 .logo-wrap img{width:48px;height:48px;object-fit:contain;filter:brightness(0) invert(1)}
 .header-text h1{font-size:18px;font-weight:800;color:#fff;letter-spacing:.03em}
 .header-text p{font-size:12px;color:rgba(255,255,255,.7);margin-top:3px;font-style:italic}
+
+/* ── LOGIN OVERLAY ── */
+#login-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(135deg,#0d3b1a 0%,#1a5c2a 60%,#2e8049 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+#login-overlay.hidden{display:none}
+.login-box{
+  background:#fff;border-radius:14px;padding:32px 28px;
+  width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,.3);
+  text-align:center;
+}
+.login-box h1{font-size:18px;font-weight:800;color:#1a5c2a;margin-bottom:4px}
+.login-box p.sub{font-size:12px;color:#888;margin-bottom:20px;font-style:italic}
+.login-field{margin-bottom:14px;text-align:left}
+.login-field label{font-size:11px;font-weight:700;color:#5a7060;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.login-field input{
+  width:100%;font-size:14px;padding:11px 13px;
+  border:1.5px solid #cde0d2;border-radius:8px;background:#f9fdf9;
+  outline:none;transition:all .15s
+}
+.login-field input:focus{border-color:#1a5c2a;background:#fff;box-shadow:0 0 0 3px rgba(26,92,42,.1)}
+.login-btn{
+  width:100%;padding:13px 0;font-size:14px;font-weight:800;cursor:pointer;
+  border:none;border-radius:9px;margin-top:6px;
+  background:linear-gradient(135deg,#1a5c2a 0%,#2e8049 100%);
+  color:#fff;letter-spacing:.02em;transition:all .15s
+}
+.login-btn:hover{background:linear-gradient(135deg,#0d3b1a 0%,#1a5c2a 100%)}
+.login-btn:disabled{opacity:.6;cursor:default}
+.login-error{font-size:12px;color:#c0392b;margin-top:12px;font-weight:600;min-height:14px}
+.logout-btn{
+  margin-left:auto;font-size:11px;font-weight:700;color:#fff;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  border-radius:7px;padding:7px 12px;cursor:pointer;transition:all .12s;white-space:nowrap
+}
+.logout-btn:hover{background:rgba(255,255,255,.28)}
 
 /* ── TABS ── */
 .tabs{
@@ -475,7 +514,29 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
 </style>
 </head>
 <body>
+
+<!-- ══════════ LOGIN OVERLAY ══════════ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <h1>Clínica Santa Marta</h1>
+    <p class="sub">Tabela de Preço — Curativo</p>
+    <form id="login-form" onsubmit="event.preventDefault();doLogin();">
+      <div class="login-field">
+        <label>E-mail</label>
+        <input type="email" id="login-email" autocomplete="username" required>
+      </div>
+      <div class="login-field">
+        <label>Senha</label>
+        <input type="password" id="login-pass" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="login-btn" id="login-btn">Entrar</button>
+      <div class="login-error" id="login-error"></div>
+    </form>
+  </div>
+</div>
+
 <div id="notif" class="notif"></div>
+<div id="app-content" style="display:none">
 <div id="modal-bg" class="modal-bg" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <div class="modal-head"><span id="modal-title">Produtos</span><button class="modal-close" onclick="closeModal()">✕</button></div>
@@ -528,6 +589,7 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
     <h1>Tabela de Preço — Curativo</h1>
     <p>Clínica Santa Marta &nbsp;|&nbsp; <span id="sync-status"><span style="color:rgba(255,255,255,.6);font-size:12px">⏳ Conectando...</span></span></p>
   </div>
+  <button class="logout-btn" id="logout-btn" onclick="doLogout()">🔓 Sair (<span id="user-email-label"></span>)</button>
 </div>
 
 <div class="tabs">
@@ -564,6 +626,7 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
     </div>
   </div>
   <div id="history-container"></div>
+</div>
 </div>
 
 <script>
@@ -1342,7 +1405,58 @@ function exportExcel(){
 // ══════════════════════════════════════════════════════════
 document.getElementById('data').valueAsDate=new Date();
 renderAtendimentos();
-initFirestore(); // carrega dados do Firebase em tempo real
+
+// ══════════════════════════════════════════════════════════
+//  AUTENTICAÇÃO
+// ══════════════════════════════════════════════════════════
+const auth = firebase.auth();
+let firestoreInitialized = false;
+
+auth.onAuthStateChanged(user => {
+  const overlay = document.getElementById('login-overlay');
+  const app = document.getElementById('app-content');
+  if(user){
+    overlay.classList.add('hidden');
+    app.style.display = '';
+    document.getElementById('user-email-label').textContent = user.email;
+    if(!firestoreInitialized){
+      firestoreInitialized = true;
+      initFirestore(); // carrega dados do Firebase em tempo real
+    }
+  }else{
+    overlay.classList.remove('hidden');
+    app.style.display = 'none';
+  }
+});
+
+function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-error');
+  err.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(e => {
+      const msgs = {
+        'auth/invalid-email':'E-mail inválido.',
+        'auth/user-not-found':'Usuário não encontrado.',
+        'auth/wrong-password':'Senha incorreta.',
+        'auth/invalid-credential':'E-mail ou senha incorretos.',
+        'auth/too-many-requests':'Muitas tentativas. Tente novamente mais tarde.'
+      };
+      err.textContent = msgs[e.code] || 'Erro ao entrar. Verifique e-mail e senha.';
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    });
+}
+
+function doLogout(){
+  auth.signOut();
+}
 </script>
 </body>
 </html>
