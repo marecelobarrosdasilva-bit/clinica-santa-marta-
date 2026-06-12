@@ -109,10 +109,12 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
 .products-list{padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-height:56px}
 .product-row{display:flex;align-items:center;gap:7px}
 .product-row select{
-  flex:1;font-size:12px;padding:7px 8px;
-  border:1px solid #cde0d2;border-radius:7px;background:#f9fdf9;outline:none
+  flex:1;font-size:12px;padding:7px 10px;
+  border:none;border-bottom:1.5px solid #cde0d2;
+  border-radius:0;background:transparent;outline:none;
+  appearance:none;-webkit-appearance:none;cursor:pointer;color:#1a1a1a
 }
-.product-row select:focus{border-color:#1a5c2a}
+.product-row select:focus{border-bottom-color:#1a5c2a}
 .product-row input[type=number]{
   width:54px;font-size:12px;padding:7px 4px;
   border:1px solid #cde0d2;border-radius:7px;text-align:center;background:#f9fdf9;outline:none
@@ -155,10 +157,14 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
 }
 .mo-bar label{font-size:11px;font-weight:700;color:#1a5c2a;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 .mo-select{
-  font-size:12px;padding:6px 8px;border:1.5px solid #cde0d2;
-  border-radius:7px;background:#fff;outline:none;color:#1a1a1a;cursor:pointer
+  font-size:12px;padding:6px 12px;
+  border:none;border-radius:8px;
+  background:linear-gradient(135deg,#1a5c2a,#34a853);
+  color:#fff;outline:none;cursor:pointer;font-weight:700;
+  appearance:none;-webkit-appearance:none
 }
-.mo-select:focus{border-color:#1a5c2a}
+.mo-select option{background:#fff;color:#1a1a1a;font-weight:400}
+.mo-select:focus{box-shadow:0 0 0 3px rgba(26,92,42,.2)}
 .mo-row{
   display:flex;align-items:center;gap:8px;padding:7px 14px;
   background:#e8f5e9;border-top:1px dashed #b7e4c7
@@ -174,11 +180,14 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
 }
 .enf-bar label{font-size:11px;font-weight:700;color:#1a3c8f;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 .enf-select{
-  flex:1;min-width:180px;font-size:12px;padding:7px 10px;
-  border:1.5px solid #b3c6f7;border-radius:8px;
-  background:#fff;outline:none;color:#1a1a1a;cursor:pointer
+  flex:1;min-width:180px;font-size:12px;padding:8px 14px;
+  border:none;border-radius:8px;
+  background:linear-gradient(135deg,#1565c0,#1976d2);
+  color:#fff;outline:none;cursor:pointer;font-weight:700;
+  appearance:none;-webkit-appearance:none
 }
-.enf-select:focus{border-color:#1a3c8f;box-shadow:0 0 0 3px rgba(26,60,143,.1)}
+.enf-select option{background:#fff;color:#1a1a1a;font-weight:400}
+.enf-select:focus{box-shadow:0 0 0 3px rgba(21,101,192,.2)}
 .enf-row{
   display:flex;align-items:center;gap:10px;padding:8px 14px;
   background:#e8eeff;border-top:1px dashed #b3c6f7
@@ -530,8 +539,8 @@ body{font-family:Arial,sans-serif;background:#f4f6f4;font-size:14px}
 <div id="page-atendimento" class="page active">
   <div class="patient-section">
     <div class="patient-grid">
-      <div class="field"><label>👤 Nome do Paciente</label><input type="text" id="nome" placeholder="Ex: Maria da Silva"></div>
-      <div class="field"><label>🩹 Tipo de Problema</label><input type="text" id="problema" placeholder="Ex: Úlcera venosa..."></div>
+      <div class="field"><label>👤 Nome do Paciente <span style="color:#e53e3e;font-size:13px">*</span></label><input type="text" id="nome" placeholder="Ex: Maria da Silva" oninput="this.style.borderColor='';this.style.boxShadow=''"></div>
+      <div class="field"><label>🩹 Tipo de Problema <span style="color:#e53e3e;font-size:13px">*</span></label><input type="text" id="problema" placeholder="Ex: Úlcera venosa..." oninput="this.style.borderColor='';this.style.boxShadow=''"></div>
       <div class="field"><label>📅 Data</label><input type="date" id="data"></div>
     </div>
     <button class="btn-new-att" onclick="addAtendimento()">➕ 🩹 Novo Atendimento</button>
@@ -659,11 +668,11 @@ const MAO_OBRA={
 
 // ── Equipe de enfermagem
 const ENFERMEIROS=[
-  {id:'danilo',   emoji:'🩺', nome:'Danilo Castro Maia',          cargo:'Enfermeiro'},
-  {id:'karla',    emoji:'🌸', nome:'Karlajuliany Marques da Silva', cargo:'Enfermeira'},
-  {id:'neandro',  emoji:'💉', nome:'Neandro Melo de Souza',        cargo:'Enfermeiro'},
-  {id:'celina',   emoji:'🌿', nome:'Celina de Souza Alfaia',       cargo:'Enfermeira'},
-  {id:'leidy',    emoji:'⭐', nome:'Leidy Nara Andrade Soares Pereira', cargo:'Enfermeira'},
+  {id:'danilo',   emoji:'🩺', nome:'Danilo Castro Maia',               cargo:'Enfermeiro'},
+  {id:'karla',    emoji:'🩺', nome:'Karlajuliany Marques da Silva',     cargo:'Enfermeira'},
+  {id:'neandro',  emoji:'🩺', nome:'Neandro Melo de Souza',             cargo:'Enfermeiro'},
+  {id:'celina',   emoji:'🩺', nome:'Celina de Souza Alfaia',            cargo:'Enfermeira'},
+  {id:'leidy',    emoji:'🩺', nome:'Leidy Nara Andrade Soares Pereira', cargo:'Enfermeira'},
 ];
 
 function getMoVal(nivel, perfil){
@@ -678,7 +687,7 @@ function calcTotal(att){
   const prods=att.items.reduce((s,it)=>{const p=PRODUTOS.find(x=>x.n===it.prod);return s+(p?p.vc*it.qty:0);},0);
   return prods + calcMoTotal(att);
 }
-function opts(sel){return'<option value="">— selecione o produto —</option>'+PRODUTOS.map(p=>`<option value="${p.n}"${sel===p.n?' selected':''}>${p.n}</option>`).join('');}
+function opts(sel){return'<option value="">Selecione o produto</option>'+PRODUTOS.map(p=>`<option value="${p.n}"${sel===p.n?' selected':''}>${p.n}</option>`).join('');}
 
 // Chave de mês: "YYYY-MM"
 function mesKey(data){return data?data.slice(0,7):'';}
@@ -733,7 +742,7 @@ function renderAtendimentos(){
       <div class="mo-bar">
         <label>🧑‍⚕️ Mão de Obra</label>
         <select class="mo-select" onchange="updateMo(${ai},'nivel',this.value)">
-          <option value="none"${!att.moNivel||att.moNivel==='none'?' selected':''}>— sem MO —</option>
+          <option value="none"${!att.moNivel||att.moNivel==='none'?' selected':''}>Selecione a MO</option>
           <option value="basico"${att.moNivel==='basico'?' selected':''}>Básico</option>
           <option value="medio"${att.moNivel==='medio'?' selected':''}>Médio</option>
           <option value="complexo"${att.moNivel==='complexo'?' selected':''}>Complexo</option>
@@ -741,16 +750,16 @@ function renderAtendimentos(){
         ${att.moNivel&&att.moNivel!=='none'?`
         <label style="margin-left:6px">Perfil</label>
         <select class="mo-select" onchange="updateMo(${ai},'perfil',this.value)">
-          <option value="B"${(att.moPerfil||'B')==='B'?' selected':''}>B — R$ ${MAO_OBRA[att.moNivel]?.B||0},00</option>
-          <option value="M"${(att.moPerfil||'B')==='M'?' selected':''}>M — R$ ${MAO_OBRA[att.moNivel]?.M||0},00</option>
-          <option value="C"${(att.moPerfil||'B')==='C'?' selected':''}>C — R$ ${MAO_OBRA[att.moNivel]?.C||0},00</option>
+          <option value="B"${(att.moPerfil||'B')==='B'?' selected':''}>Perfil: Básico — R$ ${MAO_OBRA[att.moNivel]?.B||0},00</option>
+          <option value="M"${(att.moPerfil||'B')==='M'?' selected':''}>Perfil: Médio — R$ ${MAO_OBRA[att.moNivel]?.M||0},00</option>
+          <option value="C"${(att.moPerfil||'B')==='C'?' selected':''}>Perfil: Complexo — R$ ${MAO_OBRA[att.moNivel]?.C||0},00</option>
         </select>`:''}
       </div>
       ${att.moNivel&&att.moNivel!=='none'?moRowHtml(att):''}
       <div class="enf-bar">
         <label>👩‍⚕️ Enfermeiro(a)</label>
         <select class="enf-select" onchange="updateEnf(${ai},this.value)">
-          <option value="">— selecione o profissional —</option>
+          <option value="">🩺 Selecione o Enfermeiro Responsável</option>
           ${ENFERMEIROS.map(e=>`<option value="${e.id}"${att.enfId===e.id?' selected':''}>${e.emoji} ${e.nome}</option>`).join('')}
         </select>
       </div>
@@ -781,9 +790,9 @@ function moRowHtml(att){
   const total=getMoVal(att.moNivel,perfil);
   const serv=(total*0.7).toFixed(2).replace('.',',');
   const clin=(total*0.3).toFixed(2).replace('.',',');
-  const perfilLabel={'B':'B','M':'M','C':'C'}[perfil];
+  const perfilNome={'B':'Básico','M':'Médio','C':'Complexo'}[perfil];
   return`<div class="mo-row">
-    <span class="mo-row-label">🧑‍⚕️ MO ${t.label} — Perfil ${perfilLabel}</span>
+    <span class="mo-row-label">🧑‍⚕️ MO ${t.label} — Perfil: ${perfilNome}</span>
     <span class="mo-row-detail">70% Serviço: R$ ${serv} · 30% Clínica: R$ ${clin}</span>
     <span class="mo-row-val">${fmt(total)}</span>
   </div>`;
@@ -823,7 +832,31 @@ function toggleSelect(ai,v){atendimentos[ai].selected=v;renderAtendimentos();}
 function addItem(ai){atendimentos[ai].items.push({prod:'',qty:1});renderAtendimentos();}
 function removeItem(ai,ii){atendimentos[ai].items.splice(ii,1);renderAtendimentos();}
 function updateItem(ai,ii,f,v){atendimentos[ai].items[ii][f]=v;renderAtendimentos();}
-function addAtendimento(){atendimentos.push({items:[{prod:'',qty:1}],selected:true});renderAtendimentos();}
+function addAtendimento(){
+  const nome=document.getElementById('nome').value.trim();
+  const problema=document.getElementById('problema').value.trim();
+  if(!nome){
+    document.getElementById('nome').style.borderColor='#e53e3e';
+    document.getElementById('nome').style.boxShadow='0 0 0 3px rgba(229,62,62,.15)';
+    document.getElementById('nome').focus();
+    notify('⚠️ Preencha o Nome do Paciente para continuar!','err');
+    return;
+  }
+  if(!problema){
+    document.getElementById('problema').style.borderColor='#e53e3e';
+    document.getElementById('problema').style.boxShadow='0 0 0 3px rgba(229,62,62,.15)';
+    document.getElementById('problema').focus();
+    notify('⚠️ Preencha o Tipo de Problema para continuar!','err');
+    return;
+  }
+  // Resetar bordas
+  document.getElementById('nome').style.borderColor='';
+  document.getElementById('nome').style.boxShadow='';
+  document.getElementById('problema').style.borderColor='';
+  document.getElementById('problema').style.boxShadow='';
+  atendimentos.push({items:[{prod:'',qty:1}],selected:true});
+  renderAtendimentos();
+}
 function deleteCard(ai){atendimentos.splice(ai,1);renderAtendimentos();notify('Atendimento excluído.');}
 function deleteAll(){if(!atendimentos.length)return;atendimentos=[];renderAtendimentos();notify('Todos excluídos.');}
 
