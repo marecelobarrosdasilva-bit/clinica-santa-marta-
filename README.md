@@ -1,5 +1,4 @@
 # clinica-santa-marta-
-<img width="3885" height="4084" alt="ST LOGO 2" src="https://github.com/user-attachments/assets/3fe1daa6-5a2e-4771-9872-dc30ea8efc81" />
 
 ## 🩹 Tabela de Preço Curativo — Clínica Santa Marta
 
